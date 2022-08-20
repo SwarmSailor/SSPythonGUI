@@ -1,0 +1,178 @@
+10:26:29 root 	 INFO 	 SwarmSailor Log Started
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 uiname is MainWindow
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 toplevel widget is Ui
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property geometry
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property font
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property mouseTracking
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property windowTitle
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push Ui MainWindow
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QWidget gridLayoutWidget
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property leftMargin
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property topMargin
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property rightMargin
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property bottomMargin
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property pyuicMargins
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QGridLayout gridLayout
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Open_Port
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Open_Port
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property minimumSize
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property textInteractionFlags
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel data_network_status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel data_network_status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property sizePolicy
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel label_GNSS_status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel label_GNSS_status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property textInteractionFlags
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel data_COM_Status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel data_COM_Status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property orientation
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QFrame line
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QFrame line
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property sizePolicy
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Close_Port
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Close_Port
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property sizePolicy
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel label_Messages
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel label_Messages
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QWidget advancedSection
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property leftMargin
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property topMargin
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property rightMargin
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property bottomMargin
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property spacing
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property pyuicMargins
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property pyuicSpacing
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QGridLayout advancedSection_layout
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property toolTip
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Serial_Monitor_Send
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Serial_Monitor_Send
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPlainTextEdit Serial_Monitor_Display
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPlainTextEdit Serial_Monitor_Display
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLineEdit Serial_Monitor_SendLine
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLineEdit Serial_Monitor_SendLine
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property sizePolicy
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel Label_Serial_Monitor
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel Label_Serial_Monitor
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property toolTip
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property orientation
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QFrame line_3
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QFrame line_3
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QVBoxLayout verticalLayout
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property toolTip
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_DeviceID
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_DeviceID
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property toolTip
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Firmware
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Firmware
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property toolTip
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Geospatial
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Geospatial
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property toolTip
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Restart
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Restart
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Serial_Terminal_Clear
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Serial_Terminal_Clear
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D2DD0>
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop layout QVBoxLayout verticalLayout
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop layout QGridLayout advancedSection_layout
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QWidget advancedSection
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property minimumSize
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPlainTextEdit Messages_Display
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPlainTextEdit Messages_Display
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property alignment
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel label_Commands
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel label_Commands
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel label_Network_Status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel label_Network_Status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel label_COM_PORT
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel label_COM_PORT
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QComboBox comboBox_PORT
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QComboBox comboBox_PORT
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property toolTip
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Get_GRIB
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Get_GRIB
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Send_Message
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Send_Message
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Mailbox
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Mailbox
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property sizePolicy
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property minimumSize
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property textInteractionFlags
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel data_GNSS
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel data_GNSS
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel label_COM_Status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel label_COM_Status
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Refresh_PORT
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Refresh_PORT
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property toolTip
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QPushButton Button_Advanced
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QPushButton Button_Advanced
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property sizePolicy
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel Label_Title
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel Label_Title
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property text
+10:26:30 PyQt5.uic.properties 	 DEBUG 	 setting property openExternalLinks
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 push QLabel label_Portal_HTTP
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QLabel label_Portal_HTTP
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <PyQt5.QtWidgets.QWidget object at 0x0000024D347D28C0>
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop layout QGridLayout gridLayout
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget QWidget gridLayoutWidget
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget <__main__.Ui object at 0x0000024D347D11B0>
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 pop widget Ui MainWindow
+10:26:30 PyQt5.uic.uiparser 	 DEBUG 	 new topwidget None
+10:26:32 root 	 INFO 	 Saving Settings
+10:34:29 root 	 INFO 	 Saving Settings
