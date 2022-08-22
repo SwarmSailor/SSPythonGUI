@@ -197,6 +197,21 @@
          <string>RTOFS</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>Basic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>ECMWG (Coming Soon)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>SPIRE (Coming Soon)</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="9" column="3">
