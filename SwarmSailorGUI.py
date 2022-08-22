@@ -40,6 +40,7 @@ def gen_serial_ports() -> Iterator[Tuple[str, str, str]]:
 class Newtork_Status:
     RSSI = 0
     tx_waiting = 0
+    rx_waiting = 0
 
     def print_nice(self):
         return_string = "RSSI: " + str(self.RSSI)
@@ -53,7 +54,10 @@ class Newtork_Status:
             return_string += " Good"
         elif (self.RSSI <= -105):
             return_string += " Great"
-        return_string += "\n" + "TX Waiting: " + str(self.tx_waiting)
+        if (self.tx_waiting):
+            return_string += "\n" + "TX Waiting: " + str(self.tx_waiting)
+        if (self.rx_waiting):
+            return_string += "\n" + "RX Waiting: " + str(self.rx_waiting)
         return return_string
 
 class Geolocation:
@@ -102,7 +106,7 @@ class Ui(QtWidgets.QMainWindow):
         self.findChild(QtWidgets.QPushButton, 'Button_Serial_Monitor_Send').clicked.connect(self.Button_Serial_Monitor_Send_click)
         self.findChild(QtWidgets.QPushButton, 'Button_Serial_Terminal_Clear').clicked.connect(self.Button_Serial_Terminal_Clear_click) 
         self.findChild(QtWidgets.QPushButton, 'Button_DeviceID').clicked.connect(self.Button_DeviceID_click) 
-        self.findChild(QtWidgets.QPushButton, 'Button_Mailbox').clicked.connect(self.Button_Mailbox_click)  
+        self.findChild(QtWidgets.QPushButton, 'Button_Mailbox').clicked.connect(self.Button_Mailbox_check)  
         
         self.loadHistory()
 
@@ -168,11 +172,9 @@ class Ui(QtWidgets.QMainWindow):
 
         self.send_Serial_Command('CS')      #Configuration Settings
         self.send_Serial_Command('FV')      #Firmware Version Read
-        self.send_Serial_Command('MM N=E')  #Enable RX notification 
         self.send_Serial_Command('GN 2')    #Enable GNSS data
         self.send_Serial_Command('RT 2')    #Enable RSSI
-        self.send_Serial_Command("MM C=U")  #request count of unread
-        self.send_Serial_Command("MT C=U")  #request count of unsent
+        self.Button_Mailbox_check()
 
         self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Port is now open")
         self.findChild(QtWidgets.QLabel, 'data_COM_Status').setText("Open")
@@ -267,7 +269,7 @@ class Ui(QtWidgets.QMainWindow):
     def Button_Serial_Terminal_Clear_click(self):
         self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').clear()
 
-    def Button_Mailbox_click(self):
+    def Button_Mailbox_check(self):
         self.send_Serial_Command("MM C=U") #request count of unread
         self.send_Serial_Command("MT C=U") #request count of unsent
 
@@ -340,6 +342,9 @@ class Ui(QtWidgets.QMainWindow):
                     case '$MT':
                         array = re.split(regex, text)
                         Newtork_Status.tx_waiting = array[1]
+                    case '$MM':
+                        array = re.split(regex, text)
+                        Newtork_Status.rx_waiting = array[1]
                     case '$GN':
                         array = re.split(regex, text)
                         current_geolocation.latitude = float(array[1])
@@ -376,12 +381,13 @@ class Ui(QtWidgets.QMainWindow):
                 pass
 
         if (port_available == False):
-            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Error: Port No Longer Available!")
             self.findChild(QtWidgets.QLabel, 'data_COM_Status').setText("Error: Port No Longer Available!")
             try:
                 self.ser.close()
             except:
                 pass
+        #Check for Mail
+        self.Button_Mailbox_check()   
         #Do GUI Updates
         self.findChild(QtWidgets.QLabel, 'data_GNSS').setText(current_geolocation.print_nice())
         self.findChild(QtWidgets.QLabel, 'data_network_status').setText(current_Newtork_Status.print_nice())
