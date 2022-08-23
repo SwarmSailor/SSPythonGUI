@@ -42,22 +42,6 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="1">
-     <widget class="QLabel" name="data_network_status">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Waiting</string>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-      </property>
-     </widget>
-    </item>
     <item row="6" column="0" alignment="Qt::AlignTop">
      <widget class="QLabel" name="label_GNSS_status">
       <property name="sizePolicy">
@@ -67,17 +51,7 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>GNSS Status</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="data_COM_Status">
-      <property name="text">
-       <string>Disconnected</string>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       <string>GNSS:</string>
       </property>
      </widget>
     </item>
@@ -85,19 +59,6 @@
      <widget class="Line" name="line">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="2">
-     <widget class="QPushButton" name="Button_Close_Port">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Close Port</string>
       </property>
      </widget>
     </item>
@@ -245,13 +206,6 @@
       </property>
      </widget>
     </item>
-    <item row="5" column="0" alignment="Qt::AlignTop">
-     <widget class="QLabel" name="label_Network_Status">
-      <property name="text">
-       <string>Network Status</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
      <widget class="QLabel" name="label_COM_PORT">
       <property name="text">
@@ -352,6 +306,29 @@
       </property>
       <property name="openExternalLinks">
        <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" rowspan="2" alignment="Qt::AlignTop">
+     <widget class="QLabel" name="data_Status">
+      <property name="text">
+       <string>Disconnected</string>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2">
+     <widget class="QPushButton" name="Button_Close_Port">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Close Port</string>
       </property>
      </widget>
     </item>
