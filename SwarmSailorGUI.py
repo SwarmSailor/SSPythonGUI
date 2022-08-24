@@ -24,6 +24,10 @@ MIT license
 
 Please see the LICENSE.md for more details
 
+TODO:
+-Impliment multipart messges
+-Impliment AEC compression
+
 """
 
 from typing import Iterator, Tuple
@@ -48,9 +52,13 @@ GRIBFOLDER = 'GRIBs'
 MSGLOG = 'MessageHistory.log'
 
 # SWARM Constants
+APPID_OUTGOING_GPS_PING = 37400
 APPID_OUTGOING_MESSAGE = 37500
+APPID_OUTGOING_MESSAGE_PART_REQ = 37510
 APPID_OUTGOING_GRIBRQ = 37600
+APPID_OUTGOING_GRIBRQ_PART_REQ = 37610
 APPID_INCOMING_MESSAGE = 37550
+APPID_INCOMING_MESSAGE_PART_REQ = 37560
 APPID_INCOMING_GRIB = 37700
 
 # Settings
@@ -106,6 +114,9 @@ class Geolocation:
     course = 0
     speed = 0
 
+    def print_swarm(self):
+        return str(self.latitude) + ", " + str(self.longitude)
+
     def print_nice(self):
         return str(self.latitude) + ", " + str(self.longitude) + "\n" + str(self.altitude) + "m\n" + str(self.speed) + "kph, " + str(self.course).zfill(3) + "°"
 
@@ -160,6 +171,9 @@ class Ui(QtWidgets.QMainWindow):
         self.timer5s.timeout.connect(self.timer5s_exec)
         self.timer5s.start(5000)
 
+        self.timerTracker = QTimer()
+        self.timerTracker.timeout.connect(self.timer_tracker_exec)
+
         # Ui Tweaks
         self.setWindowTitle(
             'Swarm M138 GUI - by SwarmSailor - ' + GUIVERSION)  # Update Title
@@ -177,6 +191,8 @@ class Ui(QtWidgets.QMainWindow):
         self.findChild(QtWidgets.QPushButton, 'Button_Open_Port').clicked.connect(self.Button_Open_Port_click)
         self.findChild(QtWidgets.QPushButton, 'Button_Refresh_PORT').clicked.connect(self.Button_Refresh_PORT_click)
         self.findChild(QtWidgets.QPushButton, 'Button_Send_Message').clicked.connect(self.Button_Send_Message_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').clicked.connect(self.Button_GPS_Tracker_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Send_Ping').clicked.connect(self.Button_Send_Ping_click)
         self.findChild(QtWidgets.QPushButton, 'Button_Firmware').clicked.connect(self.Button_Firmware_click)
         self.findChild(QtWidgets.QPushButton, 'Button_Geospatial').clicked.connect(self.Button_Geospatial_click)
         self.findChild(QtWidgets.QPushButton, 'Button_Empty_TX').clicked.connect(self.Button_Empty_TX_click)
@@ -324,6 +340,20 @@ class Ui(QtWidgets.QMainWindow):
         dialog.exec_()
         message_outgoing = str(random.randint(10, 99)) + str(1) + str(1) + dialog.returnString()
         self.sendTDSwarm(APPID_OUTGOING_MESSAGE, message_outgoing)
+
+    def Button_GPS_Tracker_click(self):
+        if (self.tracker_active):
+            self.tracker_active = False
+            self.timerTracker.stop()  # Stop broadcasting
+            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setStyleSheet('QPushButton {}')
+        else:
+            self.tracker_active = True
+            self.timerTracker.start(1000 * 60 * 60)  # Send every hour
+            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setStyleSheet('QPushButton {background-color: #52BE80;}')
+    tracker_active = False
+
+    def Button_Send_Ping_click(self):
+        self.timer_tracker_exec()
 
     def Button_Serial_Monitor_Send_click(self):
         self.send_Serial_Command(self.findChild(
@@ -484,15 +514,21 @@ class Ui(QtWidgets.QMainWindow):
             except:
                 pass
         # Do GUI Updates
-        self.findChild(QtWidgets.QLabel, 'data_GNSS').setText(
-            current_geolocation.print_nice())
-        self.findChild(QtWidgets.QLabel, 'data_Status').setText(
-            current_system_status.print_nice())
+        self.findChild(QtWidgets.QLabel, 'data_GNSS').setText(current_geolocation.print_nice())
+        self.findChild(QtWidgets.QLabel, 'data_Status').setText(current_system_status.print_nice())
+        if (self.tracker_active):
+            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setText(
+                'GPS Tracker ' + str(round(self.timerTracker.remainingTime() / 1000 / 60, 1)) + " min")
+        else:
+            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setText('GPS Tracker Off')
 
     def timer5s_exec(self):
         # Check for Mail
         self.send_Serial_Command("MM L=U", False)  # request list of unread
         self.send_Serial_Command("MT C=U", False)  # request count of unsent
+
+    def timer_tracker_exec(self):
+        self.sendTDSwarm(APPID_OUTGOING_GPS_PING, current_geolocation.print_swarm())
 
     def update_com_ports(self) -> None:
         self.findChild(QtWidgets.QComboBox, 'comboBox_PORT').clear()

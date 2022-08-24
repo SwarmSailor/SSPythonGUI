@@ -35,10 +35,20 @@
     <property name="bottomMargin">
      <number>12</number>
     </property>
-    <item row="2" column="2">
-     <widget class="QPushButton" name="Button_Open_Port">
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_COM_PORT">
       <property name="text">
-       <string>Open Port</string>
+       <string>COM Port:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="15" column="2" alignment="Qt::AlignBottom">
+     <widget class="QPushButton" name="Button_Advanced">
+      <property name="toolTip">
+       <string>Close or Open Advanced Window</string>
+      </property>
+      <property name="text">
+       <string>Advanced</string>
       </property>
      </widget>
     </item>
@@ -55,15 +65,42 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="0" colspan="3">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="2" column="2">
+     <widget class="QPushButton" name="Button_Open_Port">
+      <property name="text">
+       <string>Open Port</string>
       </property>
      </widget>
     </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="label_Messages">
+    <item row="1" column="1">
+     <widget class="QComboBox" name="comboBox_PORT"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_Commands">
+      <property name="text">
+       <string>Commands</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_COM_Status">
+      <property name="text">
+       <string>Status:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QPushButton" name="Button_Refresh_PORT">
+      <property name="text">
+       <string>Refresh</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="Label_Title">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -71,11 +108,43 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>Messages</string>
+       <string>SWARM SAILOR GUI</string>
       </property>
      </widget>
     </item>
-    <item row="17" column="0" colspan="3">
+    <item row="6" column="1">
+     <widget class="QLabel" name="data_GNSS">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="textInteractionFlags">
+       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0" rowspan="7" colspan="2">
+     <widget class="QPlainTextEdit" name="Messages_Display">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>200</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="20" column="0" colspan="3">
      <widget class="QWidget" name="advancedSection" native="true">
       <layout class="QGridLayout" name="advancedSection_layout">
        <property name="leftMargin">
@@ -193,108 +262,15 @@
       </layout>
      </widget>
     </item>
-    <item row="9" column="0" rowspan="4" colspan="2">
-     <widget class="QPlainTextEdit" name="Messages_Display">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>200</height>
-       </size>
+    <item row="7" column="0" colspan="3">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
-     <widget class="QLabel" name="label_Commands">
-      <property name="text">
-       <string>Commands</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_COM_PORT">
-      <property name="text">
-       <string>COM Port:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QComboBox" name="comboBox_PORT"/>
-    </item>
-    <item row="9" column="2">
-     <widget class="QPushButton" name="Button_Get_GRIB">
-      <property name="toolTip">
-       <string>Request a new GRIB file</string>
-      </property>
-      <property name="text">
-       <string>Request GRIB</string>
-      </property>
-     </widget>
-    </item>
-    <item row="10" column="2">
-     <widget class="QPushButton" name="Button_Send_Message">
-      <property name="text">
-       <string>Send Message</string>
-      </property>
-     </widget>
-    </item>
-    <item row="11" column="2">
-     <widget class="QPushButton" name="Button_Mailbox">
-      <property name="text">
-       <string>Check Mailbox</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="1">
-     <widget class="QLabel" name="data_GNSS">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="textInteractionFlags">
-       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_COM_Status">
-      <property name="text">
-       <string>Status:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="Button_Refresh_PORT">
-      <property name="text">
-       <string>Refresh</string>
-      </property>
-     </widget>
-    </item>
-    <item row="12" column="2" alignment="Qt::AlignBottom">
-     <widget class="QPushButton" name="Button_Advanced">
-      <property name="toolTip">
-       <string>Close or Open Advanced Window</string>
-      </property>
-      <property name="text">
-       <string>Advanced</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="Label_Title">
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_Messages">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -302,7 +278,7 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>SWARM SAILOR GUI</string>
+       <string>Messages</string>
       </property>
      </widget>
     </item>
@@ -336,6 +312,50 @@
       </property>
       <property name="text">
        <string>Close Port</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="2">
+     <widget class="QPushButton" name="Button_Send_Message">
+      <property name="text">
+       <string>Send Message</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="2">
+     <widget class="QPushButton" name="Button_Get_GRIB">
+      <property name="toolTip">
+       <string>Request a new GRIB file</string>
+      </property>
+      <property name="text">
+       <string>Request GRIB</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="2">
+     <widget class="QPushButton" name="Button_Mailbox">
+      <property name="text">
+       <string>Check Mailbox</string>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="2">
+     <widget class="QPushButton" name="Button_GPS_Tracker">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>GPS Tracker Off</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="2">
+     <widget class="QPushButton" name="Button_Send_Ping">
+      <property name="text">
+       <string>Send Ping</string>
       </property>
      </widget>
     </item>
