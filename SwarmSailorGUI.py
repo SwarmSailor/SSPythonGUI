@@ -45,7 +45,7 @@ APPNAME = "SwamSailorGUI"
 ORGNAME = "SwamSailor"
 LOGFILENAME = 'SwarmSailor.log'
 GRIBFOLDER = 'GRIBs'
-MSGLOG = 'MessageHistory.txt'
+MSGLOG = 'MessageHistory.log'
 
 # SWARM Constants
 APPID_OUTGOING_MESSAGE = 37500
