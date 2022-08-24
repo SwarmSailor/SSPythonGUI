@@ -175,6 +175,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="Button_Empty_TX">
+           <property name="text">
+            <string>Empty TX</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="Button_Serial_Terminal_Clear">
            <property name="text">
             <string>Terminal Clear</string>

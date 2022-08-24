@@ -18,12 +18,13 @@ APPNAME = "SwamSailorGUI"
 ORGNAME = "SwamSailor"
 LOGFILENAME = 'SwarmSailor.log'
 GRIBFOLDER = 'GRIBs'
-MSGFOLDER = 'Messages'
-MSGLOG = MSGFOLDER + '//MessageHistory.txt'
+MSGLOG = 'MessageHistory.txt'
 
 # SWARM Constants
-AppID_OUTGOING_MESSAGE = 37500
-AppID_OUTGOING_GRIBRQ = 37600
+AppID_OUTGOING_MESSAGE  = 37500
+AppID_OUTGOING_GRIBRQ   = 37600
+AppID_INCOMING_MESSAGE  = 37550
+AppID_INCOMING_GRIB     = 37700
 
 # Settings
 SETTING_PORT_NAME = 'COM1'
@@ -63,9 +64,10 @@ class system_status:
             return_string += " Good"
         elif (self.RSSI <= -105):
             return_string += " Great"
-        if (self.tx_waiting):
+
+        if (self.tx_waiting != 0):
             return_string += "\n" + "TX Waiting: " + str(self.tx_waiting)
-        if (self.rx_waiting):
+        if (self.rx_waiting != 0):
             return_string += "\n" + "RX Waiting: " + str(self.rx_waiting)
         return return_string
 
@@ -80,6 +82,35 @@ class Geolocation:
     def print_nice(self):
         return str(self.latitude) + ", " + str(self.longitude) + "\n" + str(self.altitude) + "m\n" + str(self.speed) + "kph, " + str(self.course).zfill(3) + "°"
 
+class SwarmMessage:
+    appID = ''
+    rssi  = ''
+    snr   = ''
+    fdev  = ''
+    data  = ''
+
+    def __init__(self, buildabear):
+        regex = '\s|,|\*|='
+        array = re.split(regex, buildabear)
+        self.appID = array[0]
+        self.rssi  = array[1]
+        self.snr   = array[2]
+        self.fdev  = array[3]
+        self.data  = array[4]
+
+    def print_nice(self):
+        return "New Message " + self.data
+
+    def write_to_disk(self):
+        current_time = datetime.now().strftime("%c")
+        if (self.appID == AppID_INCOMING_GRIB):
+            print_file = open(GRIBFOLDER + "/" + current_time + self.data[0:6] +  ".grb2", 'w')
+            print(self.print_nice(), file = print_file)
+            print_file.close()
+        else: #Write to message log
+            print_file = open(MSGLOG, 'a')
+            print(current_time + " < " + self.print_nice(), file = print_file)
+            print_file.close()
 
 # Global variable
 current_geolocation = Geolocation()
@@ -92,9 +123,13 @@ class Ui(QtWidgets.QMainWindow):
         uic.loadUi('dialog.ui', self)
 
         # Timers
-        self.timer1HZ = QTimer()
-        self.timer1HZ.timeout.connect(self.timer1HZ_exec)
-        self.timer1HZ.start(1000)
+        self.timer1s = QTimer()
+        self.timer1s.timeout.connect(self.timer1s_exec)
+        self.timer1s.start(1000)
+
+        self.timer5s = QTimer()
+        self.timer5s.timeout.connect(self.timer5s_exec)
+        self.timer5s.start(5000)
 
         # Ui Tweaks
         self.setWindowTitle(
@@ -125,6 +160,8 @@ class Ui(QtWidgets.QMainWindow):
             self.Button_Firmware_click)
         self.findChild(QtWidgets.QPushButton, 'Button_Geospatial').clicked.connect(
             self.Button_Geospatial_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Empty_TX').clicked.connect(
+            self.Button_Empty_TX_click)  
         self.findChild(QtWidgets.QPushButton, 'Button_Restart').clicked.connect(
             self.Button_Restart_click)
         self.findChild(QtWidgets.QPushButton, 'Button_Serial_Monitor_Send').clicked.connect(
@@ -201,15 +238,16 @@ class Ui(QtWidgets.QMainWindow):
 
         self.ser.readyRead.connect(self.receive)  # Connect the receiver
 
-        self.send_Serial_Command('CS')  # Configuration Settings
-        self.send_Serial_Command('FV')  # Firmware Version Read
-        self.send_Serial_Command('GN 2')  # Enable GNSS data
-        self.send_Serial_Command('RT 2')  # Enable RSSI
+        self.send_Serial_Command('CS')     # Configuration Settings
+        self.send_Serial_Command('FV')     # Firmware Version Read
+        self.send_Serial_Command('GN 2')   # Enable GNSS data
+        self.send_Serial_Command('RT 2')   # Enable RSSI
+        
         self.Mailbox_check()
 
         self.findChild(QtWidgets.QPlainTextEdit,
                        'Serial_Monitor_Display').appendPlainText("Port is now open")
-        current_system_status.comm_status = "Com OK"
+        current_system_status.comm_status = "Comm OK"
 
     def Button_Close_Port_click(self):
         """Close the port"""
@@ -275,7 +313,7 @@ class Ui(QtWidgets.QMainWindow):
     def Button_Send_Message_click(self):
         dialog = QDialogMessage()
         dialog.exec_()
-        messageOutgoing = str(random.random.randint(10, 99)) + str(1) + str(1) + dialog.returnString()
+        messageOutgoing = str(random.randint(10, 99)) + str(1) + str(1) + dialog.returnString()
         self.sendTDSwarm(AppID_OUTGOING_MESSAGE, messageOutgoing)
 
     def Button_Serial_Monitor_Send_click(self):
@@ -288,6 +326,9 @@ class Ui(QtWidgets.QMainWindow):
 
     def Button_Firmware_click(self):
         self.send_Serial_Command('FV')
+    
+    def Button_Empty_TX_click(self):
+        self.send_Serial_Command('MT D=U')
 
     def Button_Geospatial_click(self):
         if self.geospatial_active:
@@ -306,10 +347,10 @@ class Ui(QtWidgets.QMainWindow):
                        'Serial_Monitor_Display').clear()
 
     def Mailbox_check(self):
-        self.send_Serial_Command("MM C=U")  # request count of unread
+        self.send_Serial_Command("MM L=U")  # request count of unread
         self.send_Serial_Command("MT C=U")  # request count of unsent
 
-    def send_Serial_Command(self, message) -> None:
+    def send_Serial_Command(self, message, printthis = True) -> None:
         port_available = False
         for desc, name, sys in gen_serial_ports():
             try:
@@ -355,17 +396,16 @@ class Ui(QtWidgets.QMainWindow):
             '{:02X}', self.chksum_nmea(message)).encode('utf-8'))
         self.ser.write(bytes('\n', 'utf-8'))
 
-        print_msg = datetime.now().strftime("%H:%M:%S")
-        print_msg += " > $"
-        print_msg += message
-        print_msg += "*"
-        print_msg += str.format('{:02X}', self.chksum_nmea(message)
-                                ).encode('utf-8').decode('utf-8')
-        self.findChild(QtWidgets.QPlainTextEdit,
-                       'Serial_Monitor_Display').appendPlainText(print_msg)
+        if (printthis):
+            print_msg = datetime.now().strftime("%H:%M:%S")
+            print_msg += " > $"
+            print_msg += message
+            print_msg += "*"
+            print_msg += str.format('{:02X}', self.chksum_nmea(message)).encode('utf-8').decode('utf-8')
+            self.findChild(QtWidgets.QPlainTextEdit,'Serial_Monitor_Display').appendPlainText(print_msg)
 
     def sendTDSwarm(self, AI, message):
-        packet = "TD AI=" + AI + ",\"" + message + "\""
+        packet = "TD AI=" + str(AI) + ",\"" + message + "\""
         self.send_Serial_Command(packet)
 
     @pyqtSlot()
@@ -383,8 +423,13 @@ class Ui(QtWidgets.QMainWindow):
                         array = re.split(regex, text)
                         current_system_status.tx_waiting = array[1]
                     case '$MM':
-                        array = re.split(regex, text)
-                        current_system_status.rx_waiting = array[1]
+                        substring_ignore_list = ["DBX_NOMORE", "CMD_BADPARAMVALUE", "MM OK*24", "MM 0*10"]
+                        if any(substring in text for substring in substring_ignore_list):
+                            break
+                        else:
+                            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(current_time + " < " + text.strip())
+                            array = re.split(regex, text)
+                            self.getUnreadMessages(array[1:])
                     case '$GN':
                         array = re.split(regex, text)
                         current_geolocation.latitude = float(array[1])
@@ -393,10 +438,28 @@ class Ui(QtWidgets.QMainWindow):
                         current_geolocation.course = int(array[4])
                         current_geolocation.speed = int(array[5])
                     case _:  # wildcard
-                        self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(
-                            current_time + " < " + text.strip())
+                        self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(current_time + " < " + text.strip())
         except:
             pass
+
+    def getUnreadMessages(self, listOfMessages):
+        logging.info("Incoming Data: " + listOfMessages)
+        regex = '\s|,|\*|='
+        array = re.split(regex, listOfMessages)
+        for x in array:
+            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Array Item: " + x)
+            self.send_Serial_Command("MM R=" + x)
+            self.ser.waitForBytesWritten()
+            new_message = self.ser.readLine().data().decode()
+            incoming_message = SwarmMessage(new_message)
+            current_time = datetime.now().strftime("%H:%M:%S")
+            if (incoming_message.appID == str(AppID_INCOMING_MESSAGE)):
+                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(current_time + " < " + incoming_message.print_nice())
+            elif (incoming_message.appID == str(AppID_INCOMING_GRIB)):
+                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(current_time + " < " + "GRIB Recieved")
+            else:
+                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(current_time + " < " + "Uknown Message Receieved")
+            incoming_message.write_to_disk()
 
     def currentLocation(self):
         return (self.current_geolocation)
@@ -411,7 +474,7 @@ class Ui(QtWidgets.QMainWindow):
             csum ^= ord(c)
         return csum
 
-    def timer1HZ_exec(self) -> None:
+    def timer1s_exec(self) -> None:
         # Check if port is still ok
         port_available = False
         for desc, name, sys in gen_serial_ports():
@@ -427,13 +490,16 @@ class Ui(QtWidgets.QMainWindow):
                 self.ser.close()
             except:
                 pass
-        # Check for Mail
-        self.Mailbox_check()
         # Do GUI Updates
         self.findChild(QtWidgets.QLabel, 'data_GNSS').setText(
             current_geolocation.print_nice())
         self.findChild(QtWidgets.QLabel, 'data_Status').setText(
             current_system_status.print_nice())
+    
+    def timer5s_exec(self):
+        # Check for Mail
+        self.send_Serial_Command("MM L=U", False)  # request list of unread
+        self.send_Serial_Command("MT C=U", False)  # request count of unsent
 
     def update_com_ports(self) -> None:
         self.findChild(QtWidgets.QComboBox, 'comboBox_PORT').clear()
@@ -460,8 +526,6 @@ class Ui(QtWidgets.QMainWindow):
         # look for the appropriate directory
         if not os.path.exists(GRIBFOLDER):
             os.makedirs(GRIBFOLDER)
-        if not os.path.exists(MSGFOLDER):
-            os.makedirs(MSGFOLDER)
         try:
             if os.path.exists(MSGLOG):
                 # load log into terminal
