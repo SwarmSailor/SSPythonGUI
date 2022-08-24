@@ -14,12 +14,15 @@ or
   pip3 install PyQt5
 
 To run:
-
-    Add the enviroment:
+Add the enviroment:
     python3 -m venv venv
 
-    Run
+Run
     Python Swarm_M138_GUI.py
+
+MIT license
+
+Please see the LICENSE.md for more details
 
 """
 
