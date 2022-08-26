@@ -388,11 +388,11 @@ class Ui(QtWidgets.QMainWindow):
         self.send_Serial_Command("MM L=U")  # request count of unread
         self.send_Serial_Command("MT C=U")  # request count of unsent
 
-    def send_Serial_Command(self, message, printthis=True) -> None:
+    def send_Serial_Command(self, message, printthis = True) -> None:
         port_available = False
         for desc, name, sys in gen_serial_ports():
             try:
-                if (sys == self.currentPort()):
+                if (sys == self.currentPort() and self.ser.isOpen()):
                     port_available = True
             except:
                 pass
@@ -412,8 +412,7 @@ class Ui(QtWidgets.QMainWindow):
         self.ser.write(bytes('$', 'utf-8'))  # Send the $
         self.ser.write(bytes(message, 'utf-8'))  # Send the message
         self.ser.write(bytes('*', 'utf-8'))  # Send the *
-        self.ser.write(str.format(
-            '{:02X}', self.chksum_nmea(message)).encode('utf-8'))
+        self.ser.write(str.format('{:02X}', self.chksum_nmea(message)).encode('utf-8'))
         self.ser.write(bytes('\n', 'utf-8'))
 
         if (printthis):
