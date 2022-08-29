@@ -88,7 +88,7 @@ class system_status:
 
     def print_nice(self):
         return_string = self.comm_status + "\n"
-        return_string += "RSSI: " + str(self.RSSI)
+        return_string += "Background Noise RSSI: " + str(self.RSSI)
         if (self.RSSI >= -90):
             return_string += " Bad"
         elif (self.RSSI <= -93):
@@ -388,7 +388,7 @@ class Ui(QtWidgets.QMainWindow):
         self.send_Serial_Command("MM L=U")  # request count of unread
         self.send_Serial_Command("MT C=U")  # request count of unsent
 
-    def send_Serial_Command(self, message, printthis = True) -> None:
+    def send_Serial_Command(self, message, printthis=True) -> None:
         port_available = False
         for desc, name, sys in gen_serial_ports():
             try:
@@ -623,7 +623,7 @@ class QDialogGRIB(QtWidgets.QDialog):
         super(QDialogGRIB, self).__init__()
         uic.loadUi('gribReq.ui', self)
         self.findChild(QtWidgets.QPushButton, 'Button_Get_Location').clicked.connect(self.Button_Get_Location_Click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Send_GRIB').clicked.connect(self.done)
+        self.findChild(QtWidgets.QPushButton, 'Button_Send_GRIB').clicked.connect(self.Button_Send_GRIB_Click)
         self.findChild(QtWidgets.QComboBox, 'comboBox_Model').currentTextChanged.connect(self.change_model)
         self.change_model(self.findChild(QtWidgets.QComboBox, 'comboBox_Model').currentText())  # Set Checkboxs to Default
         # Connect Change Listeners
@@ -645,6 +645,17 @@ class QDialogGRIB(QtWidgets.QDialog):
         self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').stateChanged.connect(self.calculateMessage)
         self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').textChanged.connect(self.calc_size)
         self.calculateMessage()
+
+    def Button_Send_GRIB_Click(self):
+        if self.calc_size() <= 0.0:
+            msg = QtWidgets.QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText("Estimate is negative, please check variables")
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.exec_()
+        else:
+            logging.info("Estimated File Size" + self.calc_size())
+            self.done()
 
     def calculateMessage(self):
         # Example built around Saildocs send GFS:57N,44N,133W,113W|2.0,2.0|0,6,12..48|= WIND,PRESS
@@ -683,8 +694,37 @@ class QDialogGRIB(QtWidgets.QDialog):
         self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').setText(return_message[:len(return_message)-1])
 
     def calc_size(self):
-        self.findChild(QtWidgets.QLabel, 'data_Size_estimate').setText(str(math.ceil(len(
-            self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').text()))) + " Chars (Max 192)")
+        area_size = (self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').value() - self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').value()) * \
+            (self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').value() - self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').value())
+        match self.findChild(QtWidgets.QComboBox, 'comboBox_Res').currentText():
+            case "0.5":
+                area_size = area_size * 2
+            case "1.0":
+                pass
+        num_time_samples = (24 / int(self.findChild(QtWidgets.QComboBox, 'comboBox_Interval').currentText())) * \
+            int(self.findChild(QtWidgets.QComboBox, 'comboBox_Range').currentText())
+
+        #bit taken from \OpenCPN-master\plugins\grib_pi\src\GribRequestDialog.cpp:EstimateFileSize()
+        data_bits = 0
+        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').checkState() == Qt.Checked):
+            data_bits += 13
+        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_AirT').checkState() == Qt.Checked):
+            data_bits += 11
+        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_CAPE').checkState() == Qt.Checked):
+            data_bits += 5
+        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Cloud').checkState() == Qt.Checked):
+            data_bits += 4
+        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').checkState() == Qt.Checked):
+            data_bits += 15
+        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Wave').checkState() == Qt.Checked):
+            data_bits += 6
+        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').checkState() == Qt.Checked):
+            data_bits += 13
+        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').checkState() == Qt.Checked):
+            data_bits += 7
+        size_estimate = (data_bits / 8) * area_size * num_time_samples / 1024
+        self.findChild(QtWidgets.QLabel, 'data_Size_estimate').setText(str(round(size_estimate,1)) + " kB")
+        return size_estimate
 
     def returnString(self):
         return self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').text()

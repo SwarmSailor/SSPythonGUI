@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>706</width>
-    <height>332</height>
+    <width>695</width>
+    <height>346</height>
    </rect>
   </property>
   <property name="font">
@@ -71,8 +71,14 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="2" alignment="Qt::AlignBottom">
+     <item row="4" column="2" alignment="Qt::AlignHCenter|Qt::AlignBottom">
       <widget class="QLabel" name="label_Long">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Longitude E/W</string>
        </property>
@@ -169,8 +175,14 @@
        </item>
       </widget>
      </item>
-     <item row="4" column="1" alignment="Qt::AlignBottom">
+     <item row="4" column="1" alignment="Qt::AlignHCenter|Qt::AlignBottom">
       <widget class="QLabel" name="label_Lat">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Latitude N/S</string>
        </property>
@@ -178,6 +190,14 @@
      </item>
      <item row="2" column="1">
       <widget class="QComboBox" name="comboBox_Res">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>0.5</string>
+        </property>
+       </item>
        <item>
         <property name="text">
          <string>1.0</string>
@@ -230,6 +250,9 @@
      </item>
      <item row="12" column="1">
       <widget class="QLabel" name="data_Size_estimate">
+       <property name="toolTip">
+        <string>Please submit feedback</string>
+       </property>
        <property name="text">
         <string>1.21 Jigawatts</string>
        </property>
@@ -254,8 +277,11 @@
      </item>
      <item row="12" column="0">
       <widget class="QLabel" name="label_SizeEST">
+       <property name="toolTip">
+        <string>Please submit feedback</string>
+       </property>
        <property name="text">
-        <string>Estimated Size</string>
+        <string>Estimated GRIB Size</string>
        </property>
       </widget>
      </item>
@@ -282,6 +308,18 @@
      </item>
      <item row="4" column="0" alignment="Qt::AlignBottom">
       <widget class="QLabel" name="label_area">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>13</height>
+        </size>
+       </property>
        <property name="text">
         <string>Area Selection</string>
        </property>
