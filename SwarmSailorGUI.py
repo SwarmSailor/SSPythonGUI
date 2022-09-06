@@ -41,6 +41,8 @@ import os.path
 import logging
 import math
 import re
+import zlib
+import binascii
 import random
 
 # Constants
@@ -143,7 +145,8 @@ class SwarmMessage:
     def write_to_disk(self):
         current_time = datetime.now().strftime("%c")
         if (self.appid == APPID_INCOMING_GRIB):
-            print_file = open(GRIBFOLDER + "/" + current_time + self.data[0:6] + ".grb2", 'w')
+            print_file = open(GRIBFOLDER + "/" + current_time +
+                              self.data[0:6] + ".grb2", 'w')
             print(self.print_nice(), file=print_file)
             print_file.close()
         else:  # Write to message log
@@ -181,26 +184,44 @@ class Ui(QtWidgets.QMainWindow):
         self.update_com_ports()  # get COMS
 
         # Text boxes
-        self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').setReadOnly(True)  # Make these text edit windows read-only
-        self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').setReadOnly(True)  # Make these text edit windows read-only
+        self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').setReadOnly(
+            True)  # Make these text edit windows read-only
+        self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').setReadOnly(
+            True)  # Make these text edit windows read-only
 
         # Buttons
-        self.findChild(QtWidgets.QPushButton, 'Button_Advanced').clicked.connect(self.Button_Advanced_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Close_Port').clicked.connect(self.Button_Close_Port_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Get_GRIB').clicked.connect(self.Button_Get_GRIB_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Open_Port').clicked.connect(self.Button_Open_Port_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Refresh_PORT').clicked.connect(self.Button_Refresh_PORT_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Send_Message').clicked.connect(self.Button_Send_Message_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').clicked.connect(self.Button_GPS_Tracker_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Send_Ping').clicked.connect(self.Button_Send_Ping_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Firmware').clicked.connect(self.Button_Firmware_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Geospatial').clicked.connect(self.Button_Geospatial_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Empty_TX').clicked.connect(self.Button_Empty_TX_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Restart').clicked.connect(self.Button_Restart_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Serial_Monitor_Send').clicked.connect(self.Button_Serial_Monitor_Send_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Serial_Terminal_Clear').clicked.connect(self.Button_Serial_Terminal_Clear_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_DeviceID').clicked.connect(self.Button_DeviceID_click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Mailbox').clicked.connect(self.Mailbox_check)
+        self.findChild(QtWidgets.QPushButton, 'Button_Advanced').clicked.connect(
+            self.Button_Advanced_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Close_Port').clicked.connect(
+            self.Button_Close_Port_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Get_GRIB').clicked.connect(
+            self.Button_Get_GRIB_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Open_Port').clicked.connect(
+            self.Button_Open_Port_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Refresh_PORT').clicked.connect(
+            self.Button_Refresh_PORT_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Send_Message').clicked.connect(
+            self.Button_Send_Message_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').clicked.connect(
+            self.Button_GPS_Tracker_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Send_Ping').clicked.connect(
+            self.Button_Send_Ping_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Firmware').clicked.connect(
+            self.Button_Firmware_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Geospatial').clicked.connect(
+            self.Button_Geospatial_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Empty_TX').clicked.connect(
+            self.Button_Empty_TX_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Restart').clicked.connect(
+            self.Button_Restart_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Serial_Monitor_Send').clicked.connect(
+            self.Button_Serial_Monitor_Send_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Serial_Terminal_Clear').clicked.connect(
+            self.Button_Serial_Terminal_Clear_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_DeviceID').clicked.connect(
+            self.Button_DeviceID_click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Mailbox').clicked.connect(
+            self.Mailbox_check)
 
         self.loadHistory()
 
@@ -226,7 +247,8 @@ class Ui(QtWidgets.QMainWindow):
                 pass
 
         if (port_available == False):
-            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Error: Port Not Available!")
+            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(
+                "Error: Port Not Available!")
             current_system_status.comm_status = "Error: Port Not Available!"
             try:
                 self.ser.close()
@@ -243,7 +265,8 @@ class Ui(QtWidgets.QMainWindow):
             port_available = False
 
         if (port_available == True):
-            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Port Is Already Open!")
+            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(
+                "Port Is Already Open!")
             return
 
         try:
@@ -252,7 +275,8 @@ class Ui(QtWidgets.QMainWindow):
             self.ser.setBaudRate(QSerialPort.Baud115200)
             self.ser.open(QIODevice.ReadWrite)
         except Exception as err:
-            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Error: Failed to Open Port {}".format(err))
+            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(
+                "Error: Failed to Open Port {}".format(err))
             current_system_status.comm_status = "Error: Failed to Open Port"
             try:
                 self.ser.close()
@@ -271,7 +295,8 @@ class Ui(QtWidgets.QMainWindow):
 
         self.Mailbox_check()
 
-        self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Port is now open")
+        self.findChild(QtWidgets.QPlainTextEdit,
+                       'Serial_Monitor_Display').appendPlainText("Port is now open")
         current_system_status.comm_status = "Comm OK"
 
     def Button_Close_Port_click(self):
@@ -338,18 +363,31 @@ class Ui(QtWidgets.QMainWindow):
     def Button_Send_Message_click(self):
         dialog = QDialogMessage()
         dialog.exec_()
-        message_outgoing = str(random.randint(10, 99)) + str(1) + str(1) + dialog.returnString()
-        self.sendTDSwarm(APPID_OUTGOING_MESSAGE, message_outgoing)
+        message_data = dialog.returnData()
+        messageID = random.randint(10, 99)
+        packet_total = math.ceil(float(len(message_data))/188.0)
+        print(binascii.hexlify(message_data))
+        for x in range(packet_total):
+            message_outgoing = bytearray()
+            message_outgoing.append(messageID)
+            message_outgoing.append(x)
+            message_outgoing.append(packet_total)
+            message_outgoing += message_outgoing[:188]
+            message_data = message_data[188:]
+            print(binascii.hexlify(message_outgoing))
+            #self.sendTDSwarm(APPID_OUTGOING_MESSAGE, message_outgoing)
 
     def Button_GPS_Tracker_click(self):
         if (self.tracker_active):
             self.tracker_active = False
             self.timerTracker.stop()  # Stop broadcasting
-            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setStyleSheet('QPushButton {}')
+            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setStyleSheet(
+                'QPushButton {}')
         else:
             self.tracker_active = True
             self.timerTracker.start(1000 * 60 * 60)  # Send every hour
-            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setStyleSheet('QPushButton {background-color: #52BE80;}')
+            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setStyleSheet(
+                'QPushButton {background-color: #52BE80;}')
     tracker_active = False
 
     def Button_Send_Ping_click(self):
@@ -382,7 +420,8 @@ class Ui(QtWidgets.QMainWindow):
         self.send_Serial_Command('RS')
 
     def Button_Serial_Terminal_Clear_click(self):
-        self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').clear()
+        self.findChild(QtWidgets.QPlainTextEdit,
+                       'Serial_Monitor_Display').clear()
 
     def Mailbox_check(self):
         self.send_Serial_Command("MM L=U")  # request count of unread
@@ -406,13 +445,15 @@ class Ui(QtWidgets.QMainWindow):
             return
 
         if (message == ''):
-            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Warning: Nothing To Do! Message Is Empty!")
+            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(
+                "Warning: Nothing To Do! Message Is Empty!")
             return
 
         self.ser.write(bytes('$', 'utf-8'))  # Send the $
         self.ser.write(bytes(message, 'utf-8'))  # Send the message
         self.ser.write(bytes('*', 'utf-8'))  # Send the *
-        self.ser.write(str.format('{:02X}', self.chksum_nmea(message)).encode('utf-8'))
+        self.ser.write(str.format(
+            '{:02X}', self.chksum_nmea(message)).encode('utf-8'))
         self.ser.write(bytes('\n', 'utf-8'))
 
         if (printthis):
@@ -420,8 +461,10 @@ class Ui(QtWidgets.QMainWindow):
             print_msg += " > $"
             print_msg += message
             print_msg += "*"
-            print_msg += str.format('{:02X}', self.chksum_nmea(message)).encode('utf-8').decode('utf-8')
-            self.findChild(QtWidgets.QPlainTextEdit,     'Serial_Monitor_Display').appendPlainText(print_msg)
+            print_msg += str.format('{:02X}', self.chksum_nmea(message)
+                                    ).encode('utf-8').decode('utf-8')
+            self.findChild(QtWidgets.QPlainTextEdit,
+                           'Serial_Monitor_Display').appendPlainText(print_msg)
 
     def sendTDSwarm(self, appid, message):
         packet = "TD AI=" + str(appid) + ",\"" + message + "\""
@@ -469,18 +512,22 @@ class Ui(QtWidgets.QMainWindow):
         regex = '\s|,|\*|='
         array = re.split(regex, list_messages)
         for x in array:
-            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText("Array Item: " + x)
+            self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(
+                "Array Item: " + x)
             self.send_Serial_Command("MM R=" + x)
             self.ser.waitForBytesWritten()
             new_message = self.ser.readLine().data().decode()
             incoming_message = SwarmMessage(new_message)
             current_time = datetime.now().strftime("%H:%M:%S")
             if (incoming_message.appID == str(APPID_INCOMING_MESSAGE)):
-                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(current_time + " < " + incoming_message.print_nice())
+                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(
+                    current_time + " < " + incoming_message.print_nice())
             elif (incoming_message.appID == str(APPID_INCOMING_GRIB)):
-                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(current_time + " < " + "GRIB Recieved")
+                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(
+                    current_time + " < " + "GRIB Recieved")
             else:
-                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(current_time + " < " + "Uknown Message Receieved")
+                self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(
+                    current_time + " < " + "Uknown Message Receieved")
             incoming_message.write_to_disk()
 
     def currentLocation(self):
@@ -513,13 +560,16 @@ class Ui(QtWidgets.QMainWindow):
             except:
                 pass
         # Do GUI Updates
-        self.findChild(QtWidgets.QLabel, 'data_GNSS').setText(current_geolocation.print_nice())
-        self.findChild(QtWidgets.QLabel, 'data_Status').setText(current_system_status.print_nice())
+        self.findChild(QtWidgets.QLabel, 'data_GNSS').setText(
+            current_geolocation.print_nice())
+        self.findChild(QtWidgets.QLabel, 'data_Status').setText(
+            current_system_status.print_nice())
         if (self.tracker_active):
             self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setText(
                 'GPS Tracker ' + str(round(self.timerTracker.remainingTime() / 1000 / 60, 1)) + " min")
         else:
-            self.findChild(QtWidgets.QPushButton, 'Button_GPS_Tracker').setText('GPS Tracker Off')
+            self.findChild(QtWidgets.QPushButton,
+                           'Button_GPS_Tracker').setText('GPS Tracker Off')
 
     def timer5s_exec(self):
         # Check for Mail
@@ -527,7 +577,8 @@ class Ui(QtWidgets.QMainWindow):
         self.send_Serial_Command("MT C=U", False)  # request count of unsent
 
     def timer_tracker_exec(self):
-        self.sendTDSwarm(APPID_OUTGOING_GPS_PING, current_geolocation.print_swarm())
+        self.sendTDSwarm(APPID_OUTGOING_GPS_PING,
+                         current_geolocation.print_swarm())
 
     def update_com_ports(self) -> None:
         self.findChild(QtWidgets.QComboBox, 'comboBox_PORT').clear()
@@ -559,7 +610,8 @@ class Ui(QtWidgets.QMainWindow):
                 # load log into terminal
                 f = open(MSGLOG, "r")
                 for line in f:
-                    self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(line.strip())
+                    self.findChild(QtWidgets.QPlainTextEdit, 'Messages_Display').appendPlainText(
+                        line.strip())
             else:
                 # make new log file
                 f = open(MSGLOG, "w")
@@ -594,56 +646,89 @@ class Ui(QtWidgets.QMainWindow):
 
 
 class QDialogMessage(QtWidgets.QDialog):
-    return_message = ''
-
+    compressed_message = bytearray()
+    
     def __init__(self):
         super(QDialogMessage, self).__init__()
         uic.loadUi('message.ui', self)
-        self.findChild(QtWidgets.QLineEdit, 'lineEdit_TO').textChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QLineEdit, 'lineEdit_Subject').textChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QPlainTextEdit, 'plainTextEdit_Message').textChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QPushButton, 'Button_Send').clicked.connect(self.done)
+        self.findChild(QtWidgets.QLineEdit, 'lineEdit_TO').textChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QLineEdit, 'lineEdit_Subject').textChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QPlainTextEdit, 'plainTextEdit_Message').textChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QPushButton,
+                       'Button_Send').clicked.connect(self.done)
 
     def calculateMessage(self):
-        self.return_message = "T:"
-        self.return_message += self.findChild(QtWidgets.QLineEdit, 'lineEdit_TO').text()
-        self.return_message += "S:"
-        self.return_message += self.findChild(QtWidgets.QLineEdit, 'lineEdit_Subject').text()
-        self.return_message += "M"
-        self.return_message += self.findChild(QtWidgets.QPlainTextEdit, 'plainTextEdit_Message').toPlainText()
-        self.findChild(QtWidgets.QLabel, 'label_Size_Calc').setText(str(len(self.return_message)) +
-                                                                    " Chars (" + str(math.ceil(len(self.return_message)/192)) + " packets)")
+        display_message = "T|"
+        display_message += self.findChild(
+            QtWidgets.QLineEdit, 'lineEdit_TO').text()
+        display_message += "S|"
+        display_message += self.findChild(
+            QtWidgets.QLineEdit, 'lineEdit_Subject').text()
+        display_message += "M|"
+        display_message += self.findChild(
+            QtWidgets.QPlainTextEdit, 'plainTextEdit_Message').toPlainText()
+        #self.compressed_message = zlib.compress(display_message.encode(), 9)
+        self.compressed_message = display_message.encode()
+        compressedlength = len(self.compressed_message)
+        uncompressed_length = len(display_message)
+        
+        self.findChild(QtWidgets.QLabel, 'label_Size_Calc').setText(str(compressedlength) +
+                                                                    " bytes" + " (Compression saved: " + str(max(uncompressed_length - compressedlength, 0)) + ")")
 
-    def returnString(self):
-        return self.return_message
+    def returnData(self):
+        return self.compressed_message
 
 
 class QDialogGRIB(QtWidgets.QDialog):
     def __init__(self):
         super(QDialogGRIB, self).__init__()
         uic.loadUi('gribReq.ui', self)
-        self.findChild(QtWidgets.QPushButton, 'Button_Get_Location').clicked.connect(self.Button_Get_Location_Click)
-        self.findChild(QtWidgets.QPushButton, 'Button_Send_GRIB').clicked.connect(self.Button_Send_GRIB_Click)
-        self.findChild(QtWidgets.QComboBox, 'comboBox_Model').currentTextChanged.connect(self.change_model)
-        self.change_model(self.findChild(QtWidgets.QComboBox, 'comboBox_Model').currentText())  # Set Checkboxs to Default
+        self.findChild(QtWidgets.QPushButton, 'Button_Get_Location').clicked.connect(
+            self.Button_Get_Location_Click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Send_GRIB').clicked.connect(
+            self.Button_Send_GRIB_Click)
+        self.findChild(QtWidgets.QComboBox, 'comboBox_Model').currentTextChanged.connect(
+            self.change_model)
+        self.change_model(self.findChild(
+            QtWidgets.QComboBox, 'comboBox_Model').currentText())  # Set Checkboxs to Default
         # Connect Change Listeners
-        self.findChild(QtWidgets.QComboBox, 'comboBox_Model').currentIndexChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QComboBox, 'comboBox_Res').currentIndexChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QComboBox, 'comboBox_Range').currentIndexChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QComboBox, 'comboBox_Interval').currentIndexChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').valueChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').valueChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').valueChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').valueChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').stateChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_AirT').stateChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_CAPE').stateChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Cloud').stateChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').stateChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wave').stateChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').stateChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').stateChanged.connect(self.calculateMessage)
-        self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').textChanged.connect(self.calc_size)
+        self.findChild(QtWidgets.QComboBox, 'comboBox_Model').currentIndexChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QComboBox, 'comboBox_Res').currentIndexChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QComboBox, 'comboBox_Range').currentIndexChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QComboBox, 'comboBox_Interval').currentIndexChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').valueChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').valueChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').valueChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').valueChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').stateChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QCheckBox, 'checkBox_AirT').stateChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QCheckBox, 'checkBox_CAPE').stateChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QCheckBox, 'checkBox_Cloud').stateChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').stateChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wave').stateChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').stateChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').stateChanged.connect(
+            self.calculateMessage)
+        self.findChild(QtWidgets.QLineEdit,
+                       'lineEdit_Request').textChanged.connect(self.calc_size)
         self.calculateMessage()
 
     def Button_Send_GRIB_Click(self):
@@ -663,15 +748,22 @@ class QDialogGRIB(QtWidgets.QDialog):
         return_message = self.findChild(
             QtWidgets.QComboBox, 'comboBox_Model').currentText() + ":"
         # GPS Range
-        return_message += str(self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').value()) + ","
-        return_message += str(self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').value()) + ","
-        return_message += str(self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').value()) + ","
-        return_message += str(self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').value()) + "|"
+        return_message += str(self.findChild(QtWidgets.QSpinBox,
+                              'spinBox_Lat_Max').value()) + ","
+        return_message += str(self.findChild(QtWidgets.QSpinBox,
+                              'spinBox_Lat_Min').value()) + ","
+        return_message += str(self.findChild(QtWidgets.QSpinBox,
+                              'spinBox_Long_Min').value()) + ","
+        return_message += str(self.findChild(QtWidgets.QSpinBox,
+                              'spinBox_Long_Max').value()) + "|"
         # Resolution
-        return_message += str(self.findChild(QtWidgets.QComboBox, 'comboBox_Res').currentText()) + "|"
+        return_message += str(self.findChild(QtWidgets.QComboBox,
+                              'comboBox_Res').currentText()) + "|"
         #Interval and Duration
-        return_message += str(self.findChild(QtWidgets.QComboBox, 'comboBox_Interval').currentText()) + ","
-        return_message += str(self.findChild(QtWidgets.QComboBox, 'comboBox_Range').currentText()) + "|"
+        return_message += str(self.findChild(QtWidgets.QComboBox,
+                              'comboBox_Interval').currentText()) + ","
+        return_message += str(self.findChild(QtWidgets.QComboBox,
+                              'comboBox_Range').currentText()) + "|"
         # Data Types
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').checkState():
             return_message += "CUR,"
@@ -689,13 +781,16 @@ class QDialogGRIB(QtWidgets.QDialog):
             return_message += "WIND,"
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').checkState():
             return_message += "GUST,"
-        self.findChild(QtWidgets.QLabel, 'data_Size_estimate').setText(str(math.ceil(len(return_message))) + " Chars (Max 192)")
+        self.findChild(QtWidgets.QLabel, 'data_Size_estimate').setText(
+            str(math.ceil(len(return_message))) + " Chars (Max 192)")
 
-        self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').setText(return_message[:len(return_message)-1])
+        self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').setText(
+            return_message[:len(return_message)-1])
 
     def calc_size(self):
         area_size = (self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').value() - self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').value()) * \
-            (self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').value() - self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').value())
+            (self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').value() -
+             self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').value())
         match self.findChild(QtWidgets.QComboBox, 'comboBox_Res').currentText():
             case "0.5":
                 area_size = area_size * 2
@@ -704,7 +799,7 @@ class QDialogGRIB(QtWidgets.QDialog):
         num_time_samples = (24 / int(self.findChild(QtWidgets.QComboBox, 'comboBox_Interval').currentText())) * \
             int(self.findChild(QtWidgets.QComboBox, 'comboBox_Range').currentText())
 
-        #bit taken from \OpenCPN-master\plugins\grib_pi\src\GribRequestDialog.cpp:EstimateFileSize()
+        # bit taken from \OpenCPN-master\plugins\grib_pi\src\GribRequestDialog.cpp:EstimateFileSize()
         data_bits = 0
         if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').checkState() == Qt.Checked):
             data_bits += 13
@@ -723,32 +818,47 @@ class QDialogGRIB(QtWidgets.QDialog):
         if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').checkState() == Qt.Checked):
             data_bits += 7
         size_estimate = (data_bits / 8) * area_size * num_time_samples / 1024
-        self.findChild(QtWidgets.QLabel, 'data_Size_estimate').setText(str(round(size_estimate,1)) + " kB")
+        self.findChild(QtWidgets.QLabel, 'data_Size_estimate').setText(
+            str(round(size_estimate, 1)) + " kB")
         return size_estimate
 
     def returnString(self):
         return self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').text()
 
     def Button_Get_Location_Click(self):
-        self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').setValue(round(current_geolocation.latitude))
-        self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').setValue(round(current_geolocation.latitude))
-        self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').setValue(round(current_geolocation.longitude))
-        self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').setValue(round(current_geolocation.longitude))
+        self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').setValue(
+            round(current_geolocation.latitude))
+        self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').setValue(
+            round(current_geolocation.latitude))
+        self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').setValue(
+            round(current_geolocation.longitude))
+        self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').setValue(
+            round(current_geolocation.longitude))
 
     def change_model(self, new_model):
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').setCheckState(Qt.Unchecked)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_AirT').setCheckState(Qt.Unchecked)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_CAPE').setCheckState(Qt.Unchecked)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Cloud').setCheckState(Qt.Unchecked)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').setCheckState(Qt.Unchecked)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wave').setCheckState(Qt.Unchecked)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').setCheckState(Qt.Unchecked)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').setCheckState(Qt.Unchecked)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').setEnabled(True)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_Current').setCheckState(Qt.Unchecked)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_AirT').setCheckState(Qt.Unchecked)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_CAPE').setCheckState(Qt.Unchecked)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_Cloud').setCheckState(Qt.Unchecked)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_Pressure').setCheckState(Qt.Unchecked)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_Wave').setCheckState(Qt.Unchecked)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_Wind').setCheckState(Qt.Unchecked)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_Wing').setCheckState(Qt.Unchecked)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_Current').setEnabled(True)
         self.findChild(QtWidgets.QCheckBox, 'checkBox_AirT').setEnabled(True)
         self.findChild(QtWidgets.QCheckBox, 'checkBox_CAPE').setEnabled(True)
         self.findChild(QtWidgets.QCheckBox, 'checkBox_Cloud').setEnabled(True)
-        self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').setEnabled(True)
+        self.findChild(QtWidgets.QCheckBox,
+                       'checkBox_Pressure').setEnabled(True)
         self.findChild(QtWidgets.QCheckBox, 'checkBox_Wave').setEnabled(True)
         self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').setEnabled(True)
         self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').setEnabled(True)
@@ -757,22 +867,36 @@ class QDialogGRIB(QtWidgets.QDialog):
         match new_model:
             case 'GFS':
                 for x in range(1, 17):
-                    self.findChild(QtWidgets.QComboBox, 'comboBox_Range').addItem(str(x))
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').setEnabled(False)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').setCheckState(Qt.Checked)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').setCheckState(Qt.Checked)
+                    self.findChild(QtWidgets.QComboBox,
+                                   'comboBox_Range').addItem(str(x))
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Current').setEnabled(False)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Wind').setCheckState(Qt.Checked)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Pressure').setCheckState(Qt.Checked)
             case 'RTOFS':
                 for x in range(1, 7):
-                    self.findChild(QtWidgets.QComboBox, 'comboBox_Range').addItem(str(x))
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').setCheckState(Qt.Checked)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').setEnabled(False)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_AirT').setEnabled(False)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_CAPE').setEnabled(False)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Cloud').setEnabled(False)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').setEnabled(False)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Wave').setEnabled(False)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').setEnabled(False)
-                self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').setEnabled(False)
+                    self.findChild(QtWidgets.QComboBox,
+                                   'comboBox_Range').addItem(str(x))
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Current').setCheckState(Qt.Checked)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Current').setEnabled(False)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_AirT').setEnabled(False)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_CAPE').setEnabled(False)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Cloud').setEnabled(False)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Pressure').setEnabled(False)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Wave').setEnabled(False)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Wind').setEnabled(False)
+                self.findChild(QtWidgets.QCheckBox,
+                               'checkBox_Wing').setEnabled(False)
             case 'Local':
                 return
             case 'ECMWG':
