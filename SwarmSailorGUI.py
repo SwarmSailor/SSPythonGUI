@@ -42,7 +42,6 @@ import logging
 import math
 import re
 import zlib
-import binascii
 import random
 
 # Constants
@@ -357,25 +356,25 @@ class Ui(QtWidgets.QMainWindow):
 
     def Button_Get_GRIB_click(self):
         dialog = QDialogGRIB()
-        dialog.exec_()
-        self.sendTDSwarm(APPID_OUTGOING_GRIBRQ, dialog.returnString())
+        if(dialog.exec_() != 1):
+            return
+        self.sendTDSwarmStr(APPID_OUTGOING_GRIBRQ, dialog.returnString())
 
     def Button_Send_Message_click(self):
         dialog = QDialogMessage()
-        dialog.exec_()
+        if(dialog.exec_() != 1):
+            return
         message_data = dialog.returnData()
-        messageID = random.randint(10, 99)
+        messageID = random.randint(1, 65535)
         packet_total = math.ceil(float(len(message_data))/188.0)
-        print(binascii.hexlify(message_data))
         for x in range(packet_total):
             message_outgoing = bytearray()
-            message_outgoing.append(messageID)
-            message_outgoing.append(x)
+            message_outgoing += messageID.to_bytes(2, 'big')
+            message_outgoing.append(x+1)
             message_outgoing.append(packet_total)
-            message_outgoing += message_outgoing[:188]
+            message_outgoing += message_data[:188]
             message_data = message_data[188:]
-            print(binascii.hexlify(message_outgoing))
-            #self.sendTDSwarm(APPID_OUTGOING_MESSAGE, message_outgoing)
+            self.sendTDSwarmHex(APPID_OUTGOING_MESSAGE, message_outgoing)
 
     def Button_GPS_Tracker_click(self):
         if (self.tracker_active):
@@ -466,8 +465,12 @@ class Ui(QtWidgets.QMainWindow):
             self.findChild(QtWidgets.QPlainTextEdit,
                            'Serial_Monitor_Display').appendPlainText(print_msg)
 
-    def sendTDSwarm(self, appid, message):
+    def sendTDSwarmStr(self, appid, message):
         packet = "TD AI=" + str(appid) + ",\"" + message + "\""
+        self.send_Serial_Command(packet)
+
+    def sendTDSwarmHex(self, appid, message):
+        packet = "TD AI=" + str(appid) + " " + message.hex()
         self.send_Serial_Command(packet)
 
     @pyqtSlot()
@@ -577,7 +580,7 @@ class Ui(QtWidgets.QMainWindow):
         self.send_Serial_Command("MT C=U", False)  # request count of unsent
 
     def timer_tracker_exec(self):
-        self.sendTDSwarm(APPID_OUTGOING_GPS_PING,
+        self.sendTDSwarmStr(APPID_OUTGOING_GPS_PING,
                          current_geolocation.print_swarm())
 
     def update_com_ports(self) -> None:
@@ -657,37 +660,37 @@ class QDialogMessage(QtWidgets.QDialog):
             self.calculateMessage)
         self.findChild(QtWidgets.QPlainTextEdit, 'plainTextEdit_Message').textChanged.connect(
             self.calculateMessage)
-        self.findChild(QtWidgets.QPushButton,
-                       'Button_Send').clicked.connect(self.done)
+        self.findChild(QtWidgets.QPushButton,'Button_Send').clicked.connect(self.Button_Send_Push)
+        self.calculateMessage()
 
     def calculateMessage(self):
+        field_to = self.findChild(QtWidgets.QLineEdit, 'lineEdit_TO').text()
+        field_subject = self.findChild(QtWidgets.QLineEdit, 'lineEdit_Subject').text()
+        field_message = self.findChild(QtWidgets.QPlainTextEdit, 'plainTextEdit_Message').toPlainText()
         display_message = "T|"
-        display_message += self.findChild(
-            QtWidgets.QLineEdit, 'lineEdit_TO').text()
+        display_message += field_to
         display_message += "S|"
-        display_message += self.findChild(
-            QtWidgets.QLineEdit, 'lineEdit_Subject').text()
+        display_message += field_subject
         display_message += "M|"
-        display_message += self.findChild(
-            QtWidgets.QPlainTextEdit, 'plainTextEdit_Message').toPlainText()
-        #self.compressed_message = zlib.compress(display_message.encode(), 9)
-        self.compressed_message = display_message.encode()
+        display_message += field_message
+        self.compressed_message = zlib.compress(display_message.encode(), 9)
         compressedlength = len(self.compressed_message)
-        uncompressed_length = len(display_message)
-        
+        uncompressed_length = len(display_message)        
         self.findChild(QtWidgets.QLabel, 'label_Size_Calc').setText(str(compressedlength) +
                                                                     " bytes" + " (Compression saved: " + str(max(uncompressed_length - compressedlength, 0)) + ")")
 
     def returnData(self):
         return self.compressed_message
 
+    def Button_Send_Push(self):
+        self.done(1)
+
 
 class QDialogGRIB(QtWidgets.QDialog):
     def __init__(self):
         super(QDialogGRIB, self).__init__()
         uic.loadUi('gribReq.ui', self)
-        self.findChild(QtWidgets.QPushButton, 'Button_Get_Location').clicked.connect(
-            self.Button_Get_Location_Click)
+        self.findChild(QtWidgets.QPushButton, 'Button_Get_Location').clicked.connect(self.Button_Get_Location_Click)
         self.findChild(QtWidgets.QPushButton, 'Button_Send_GRIB').clicked.connect(
             self.Button_Send_GRIB_Click)
         self.findChild(QtWidgets.QComboBox, 'comboBox_Model').currentTextChanged.connect(
@@ -739,8 +742,7 @@ class QDialogGRIB(QtWidgets.QDialog):
             msg.setIcon(QtWidgets.QMessageBox.Critical)
             msg.exec_()
         else:
-            logging.info("Estimated File Size" + self.calc_size())
-            self.done()
+            self.done(1)
 
     def calculateMessage(self):
         # Example built around Saildocs send GFS:57N,44N,133W,113W|2.0,2.0|0,6,12..48|= WIND,PRESS
