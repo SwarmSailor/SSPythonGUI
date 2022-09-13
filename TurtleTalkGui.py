@@ -20,13 +20,13 @@ Add the enviroment:
 Run
     Python Swarm_M138_GUI.py
 
+For Serial ports you may need:
+
+sudo apt-get install -y python3-pyqt5.qtserialport
+
 MIT license
 
 Please see the LICENSE.md for more details
-
-TODO:
--Impliment multipart messges
--Impliment AEC compression
 
 """
 
@@ -46,9 +46,9 @@ import random
 
 # Constants
 GUIVERSION = 'v1.0.0'
-APPNAME = "SwamSailorGUI"
-ORGNAME = "SwamSailor"
-LOGFILENAME = 'SwarmSailor.log'
+APPNAME = "TurtleTalkGUI"
+ORGNAME = "TurtleTalk"
+LOGFILENAME = 'TurtleTalk.log'
 GRIBFOLDER = 'GRIBs'
 MSGLOG = 'MessageHistory.log'
 
@@ -115,7 +115,7 @@ class Geolocation:
     course = 0
     speed = 0
 
-    def print_swarm(self):
+    def return_location(self):
         return str(self.latitude) + ", " + str(self.longitude)
 
     def print_nice(self):
@@ -580,7 +580,7 @@ class Ui(QtWidgets.QMainWindow):
 
     def timer_tracker_exec(self):
         self.sendTDSwarmStr(APPID_OUTGOING_GPS_PING,
-                         current_geolocation.print_swarm())
+                         current_geolocation.return_location())
 
     def update_com_ports(self) -> None:
         self.findChild(QtWidgets.QComboBox, 'comboBox_PORT').clear()
