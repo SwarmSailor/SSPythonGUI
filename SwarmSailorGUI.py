@@ -480,14 +480,13 @@ class Ui(QtWidgets.QMainWindow):
                 text = self.ser.readLine().data().decode()
                 current_time = datetime.now().strftime("%H:%M:%S")
                 regex = '\s|,|\*|='
-                match text[0:3]:
-                    case "$RT":
+                if (text[0:3] == "$RT"):
                         array = re.split(regex, text)
                         current_system_status.RSSI = int(array[2])
-                    case '$MT':
+                elif (text[0:3] == "$MT"):
                         array = re.split(regex, text)
                         current_system_status.tx_waiting = array[1]
-                    case '$MM':
+                elif (text[0:3] == "$MM"):
                         substring_ignore_list = [
                             "DBX_NOMORE", "CMD_BADPARAMVALUE", "MM OK*24", "MM 0*10"]
                         if any(substring in text for substring in substring_ignore_list):
@@ -497,14 +496,14 @@ class Ui(QtWidgets.QMainWindow):
                                 current_time + " < " + text.strip())
                             array = re.split(regex, text)
                             self.getUnreadMessages(array[1:])
-                    case '$GN':
+                elif (text[0:3] == "$GN"):
                         array = re.split(regex, text)
                         current_geolocation.latitude = float(array[1])
                         current_geolocation.longitude = float(array[2])
                         current_geolocation.altitude = int(array[3])
                         current_geolocation.course = int(array[4])
                         current_geolocation.speed = int(array[5])
-                    case _:  # wildcard
+                else:
                         self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(
                             current_time + " < " + text.strip())
         except:
@@ -793,10 +792,10 @@ class QDialogGRIB(QtWidgets.QDialog):
         area_size = (self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').value() - self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').value()) * \
             (self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').value() -
              self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').value())
-        match self.findChild(QtWidgets.QComboBox, 'comboBox_Res').currentText():
-            case "0.5":
+        resolution = self.findChild(QtWidgets.QComboBox, 'comboBox_Res').currentText()
+        if (resolution == "0.5"): 
                 area_size = area_size * 2
-            case "1.0":
+        elif(resolution == "1.0"):
                 pass
         num_time_samples = (24 / int(self.findChild(QtWidgets.QComboBox, 'comboBox_Interval').currentText())) * \
             int(self.findChild(QtWidgets.QComboBox, 'comboBox_Range').currentText())
@@ -866,8 +865,7 @@ class QDialogGRIB(QtWidgets.QDialog):
         self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').setEnabled(True)
 
         self.findChild(QtWidgets.QComboBox, 'comboBox_Range').clear()
-        match new_model:
-            case 'GFS':
+        if (new_model == 'GFS' ):
                 for x in range(1, 17):
                     self.findChild(QtWidgets.QComboBox,
                                    'comboBox_Range').addItem(str(x))
@@ -877,7 +875,7 @@ class QDialogGRIB(QtWidgets.QDialog):
                                'checkBox_Wind').setCheckState(Qt.Checked)
                 self.findChild(QtWidgets.QCheckBox,
                                'checkBox_Pressure').setCheckState(Qt.Checked)
-            case 'RTOFS':
+        elif (new_model == 'RTOFS' ):
                 for x in range(1, 7):
                     self.findChild(QtWidgets.QComboBox,
                                    'comboBox_Range').addItem(str(x))
@@ -899,12 +897,12 @@ class QDialogGRIB(QtWidgets.QDialog):
                                'checkBox_Wind').setEnabled(False)
                 self.findChild(QtWidgets.QCheckBox,
                                'checkBox_Wing').setEnabled(False)
-            case 'Local':
-                return
-            case 'ECMWG':
-                return
-            case 'SPIRE':
-                return
+        elif (new_model == 'Local' ):
+            return
+        elif (new_model == 'ECMWG' ):
+            return
+        elif (new_model == 'SPIRE' ):
+            return
 
 
 app = QtWidgets.QApplication(sys.argv)
