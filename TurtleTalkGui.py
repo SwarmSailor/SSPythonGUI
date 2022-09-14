@@ -41,6 +41,7 @@ import os.path
 import logging
 import math
 import re
+import binascii
 import zlib
 import random
 
@@ -673,11 +674,14 @@ class QDialogMessage(QtWidgets.QDialog):
         display_message += field_subject
         display_message += "M|"
         display_message += field_message
-        self.compressed_message = zlib.compress(display_message.encode(), zlib.Z_BEST_COMPRESSION)
+        #Compress message with Zlib no headers/checksum
+        compressor = zlib.compressobj(zlib.Z_BEST_COMPRESSION, zlib.DEFLATED, -zlib.MAX_WBITS)
+        self.compressed_message = compressor.compress(display_message.encode())
+        self.compressed_message += compressor.flush()
         compressedlength = len(self.compressed_message)
         uncompressed_length = len(display_message)        
         self.findChild(QtWidgets.QLabel, 'label_Size_Calc').setText(str(compressedlength) +
-                                                                    " bytes" + " (Compression saved: " + str(max(uncompressed_length - compressedlength, 0)) + ")")
+                                                                    " bytes" + " (Compression saved: " + str(uncompressed_length - compressedlength) + ")")
 
     def returnData(self):
         return self.compressed_message
