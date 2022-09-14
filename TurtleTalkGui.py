@@ -272,7 +272,8 @@ class Ui(QtWidgets.QMainWindow):
             self.ser = QSerialPort()
             self.ser.setPortName(self.currentPort())
             self.ser.setBaudRate(QSerialPort.Baud115200)
-            self.ser.open(QIODevice.ReadWrite)
+            if (self.ser.open(QIODevice.ReadWrite) == False):
+                raise Exception("Failed to open Serial Port")
         except Exception as err:
             self.findChild(QtWidgets.QPlainTextEdit, 'Serial_Monitor_Display').appendPlainText(
                 "Error: Failed to Open Port {}".format(err))
@@ -571,7 +572,7 @@ class Ui(QtWidgets.QMainWindow):
                 'GPS Tracker ' + str(round(self.timerTracker.remainingTime() / 1000 / 60, 1)) + " min")
         else:
             self.findChild(QtWidgets.QPushButton,
-                           'Button_GPS_Tracker').setText('GPS Tracker Off')
+                           'Button_GPS_Tracker').setText('GPS Tracker')
 
     def timer5s_exec(self):
         # Check for Mail

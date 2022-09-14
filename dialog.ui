@@ -345,7 +345,7 @@
        <string notr="true"/>
       </property>
       <property name="text">
-       <string>GPS Tracker Off</string>
+       <string>GPS Tracker</string>
       </property>
       <property name="checkable">
        <bool>true</bool>
