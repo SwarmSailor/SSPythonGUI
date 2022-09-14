@@ -673,7 +673,7 @@ class QDialogMessage(QtWidgets.QDialog):
         display_message += field_subject
         display_message += "M|"
         display_message += field_message
-        self.compressed_message = zlib.compress(display_message.encode(), 9)
+        self.compressed_message = zlib.compress(display_message.encode(), zlib.Z_BEST_COMPRESSION)
         compressedlength = len(self.compressed_message)
         uncompressed_length = len(display_message)        
         self.findChild(QtWidgets.QLabel, 'label_Size_Calc').setText(str(compressedlength) +
