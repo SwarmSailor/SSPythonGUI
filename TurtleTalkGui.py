@@ -734,8 +734,6 @@ class QDialogGRIB(QtWidgets.QDialog):
             self.calculateMessage)
         self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').stateChanged.connect(
             self.calculateMessage)
-        self.findChild(QtWidgets.QLineEdit,
-                       'lineEdit_Request').textChanged.connect(self.calc_size)
         self.calculateMessage()
 
     def Button_Send_GRIB_Click(self):
@@ -759,9 +757,10 @@ class QDialogGRIB(QtWidgets.QDialog):
         return_message += str(self.findChild(QtWidgets.QSpinBox,
                               'spinBox_Lat_Min').value()) + ","
         return_message += str(self.findChild(QtWidgets.QSpinBox,
-                              'spinBox_Long_Min').value()) + ","
+                              'spinBox_Long_Max').value()) + ","
         return_message += str(self.findChild(QtWidgets.QSpinBox,
-                              'spinBox_Long_Max').value()) + "|"
+                              'spinBox_Long_Min').value()) + "|"
+        
         # Resolution
         return_message += str(self.findChild(QtWidgets.QComboBox,
                               'comboBox_Res').currentText()) + "|"
@@ -774,59 +773,23 @@ class QDialogGRIB(QtWidgets.QDialog):
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').checkState():
             return_message += "CUR,"
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_AirT').checkState():
-            return_message += "AIRTMP,"
+            return_message += "AIRT,"
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_CAPE').checkState():
             return_message += "CAPE,"
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Cloud').checkState():
-            return_message += "TCDC,"
+            return_message += "CLOUD,"
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').checkState():
             return_message += "PRESS,"
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Wave').checkState():
-            return_message += "HTSGW,WVPER,WVDIR,"
+            return_message += "WAVE,"
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').checkState():
             return_message += "WIND,"
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').checkState():
             return_message += "GUST,"
-        self.findChild(QtWidgets.QLabel, 'data_Size_estimate').setText(
-            str(math.ceil(len(return_message))) + " Chars (Max 192)")
 
         self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').setText(
             return_message[:len(return_message)-1])
 
-    def calc_size(self):
-        area_size = (self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Max').value() - self.findChild(QtWidgets.QSpinBox, 'spinBox_Lat_Min').value()) * \
-            (self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Max').value() -
-             self.findChild(QtWidgets.QSpinBox, 'spinBox_Long_Min').value())
-        resolution = self.findChild(QtWidgets.QComboBox, 'comboBox_Res').currentText()
-        if (resolution == "0.5"): 
-                area_size = area_size * 2
-        elif(resolution == "1.0"):
-                pass
-        num_time_samples = (24 / int(self.findChild(QtWidgets.QComboBox, 'comboBox_Interval').currentText())) * \
-            int(self.findChild(QtWidgets.QComboBox, 'comboBox_Range').currentText())
-
-        # bit taken from \OpenCPN-master\plugins\grib_pi\src\GribRequestDialog.cpp:EstimateFileSize()
-        data_bits = 0
-        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').checkState() == Qt.Checked):
-            data_bits += 13
-        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_AirT').checkState() == Qt.Checked):
-            data_bits += 11
-        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_CAPE').checkState() == Qt.Checked):
-            data_bits += 5
-        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Cloud').checkState() == Qt.Checked):
-            data_bits += 4
-        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Pressure').checkState() == Qt.Checked):
-            data_bits += 15
-        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Wave').checkState() == Qt.Checked):
-            data_bits += 6
-        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Wind').checkState() == Qt.Checked):
-            data_bits += 13
-        if (self.findChild(QtWidgets.QCheckBox, 'checkBox_Wing').checkState() == Qt.Checked):
-            data_bits += 7
-        size_estimate = (data_bits / 8) * area_size * num_time_samples / 1024
-        self.findChild(QtWidgets.QLabel, 'data_Size_estimate').setText(
-            str(round(size_estimate, 1)) + " kB")
-        return size_estimate
 
     def returnString(self):
         return self.findChild(QtWidgets.QLineEdit, 'lineEdit_Request').text()
