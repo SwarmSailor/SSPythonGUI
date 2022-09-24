@@ -90,17 +90,18 @@ class system_status:
 
     def print_nice(self):
         return_string = self.comm_status + "\n"
-        return_string += "Background Noise RSSI: " + str(self.RSSI)
-        if (self.RSSI >= -90):
-            return_string += " Bad"
-        elif (self.RSSI <= -93):
-            return_string += " Marginal"
-        elif (self.RSSI <= -97):
-            return_string += " OK"
+        return_string += "Noise RSSI: " + str(self.RSSI)
+        if (self.RSSI <= -105):
+            return_string += " Great"
         elif (self.RSSI <= -100):
             return_string += " Good"
-        elif (self.RSSI <= -105):
-            return_string += " Great"
+        elif (self.RSSI <= -97):
+            return_string += " OK"
+        elif (self.RSSI <= -93):
+            return_string += " Marginal"
+        else:
+            return_string += " Bad"
+        
 
         if (self.tx_waiting != 0):
             return_string += "\n" + "TX Waiting: " + str(self.tx_waiting)
@@ -485,6 +486,8 @@ class Ui(QtWidgets.QMainWindow):
                 if (text[0:3] == "$RT"):
                         array = re.split(regex, text)
                         current_system_status.RSSI = int(array[2])
+                        if (len(array) != 5):
+                            print(text.strip())
                 elif (text[0:3] == "$MT"):
                         array = re.split(regex, text)
                         current_system_status.tx_waiting = array[1]
@@ -765,10 +768,8 @@ class QDialogGRIB(QtWidgets.QDialog):
         return_message += str(self.findChild(QtWidgets.QComboBox,
                               'comboBox_Res').currentText()) + "|"
         #Interval and Duration
-        return_message += str(self.findChild(QtWidgets.QComboBox,
-                              'comboBox_Interval').currentText()) + ","
-        return_message += str(self.findChild(QtWidgets.QComboBox,
-                              'comboBox_Range').currentText()) + "|"
+        return_message += self.findChild(QtWidgets.QComboBox,'comboBox_Interval').currentText() + ","
+        return_message += str(int(self.findChild(QtWidgets.QComboBox,'comboBox_Range').currentText()) *24) + "|"
         # Data Types
         if self.findChild(QtWidgets.QCheckBox, 'checkBox_Current').checkState():
             return_message += "CUR,"
